@@ -1,35 +1,29 @@
 ---
 layout: cv
-title: David Layardi
+title: Muhammad Teguh Pangestu
 ---
-# David Layardi
-Cloud Infrastructure, Automation, DevOps Engineer.
+# Muhammad Teguh Pangestu
+Software Engineer
 
 <div id="webaddress">
 <text>Jakarta, Indonesia</text>
-| <a href="mailto:david@layardi.com">david@layardi.com</a>
-| <a href="https://github.com/doctor500">github.com/doctor500</a>
-| <a href="https://www.linkedin.com/in/david-lay/">linkedin.com/in/david-lay</a>
-| <a href="https://medium.com/@davidlayardi">medium.com/@davidlayardi</a>
+| <a href="mailto:muhammad.pangestu@outlook.com">muhammad.pangestu@outlook.com</a>
+| <a href="https://github.com/mstrassassin1st">GitHub</a>
 </div>
 
 
 ## Profile Summary
-
-Indonesian, speaks native Bahasa & intermediate English. Passionate as an application developer since 2011 in various web application development with soft skills that I built up from 5-year organizational experience in analytical thinking, problem-solving, and collaboration.
-
-Since 2018, I've successfully delivered automation-based innovation to solve business problems for more than 10 professional projects. Now I'm focused on infrastructure & automation by implementing the DevOps culture to improve software engineer productivity. 
+A software engineer who thrives in helping and empowering others in being the best version of themselves and building the best product possible.
 
 ### Technical Skill
 
-AWS, GCP, Linux VM, Windows Server, Debian, CentOS, Docker, Kubernetes, MySQL, PostgreSQL, Git, Python, Java (Groovy), Jenkins, Gitlab CI, GitHub Actions, Helm, Kustomize, Terraform.
+## Education
 
-## Professional Experience
+`2017-2021`
+__Bina Nusantara University, Jakarta__
 
-`Nov 2021 - Now`
-__DevOps Engineer__, Gojek - GoTo Financial
-
-Part Commerce Enablement - Developer Experience (CE DevX) Team. We provide cloud infrastructure platform for CE products and engineers at scale.
+- Bachelor's degree, Computer Science
+- Took Artificial Intelligence Specialization. Graduated in the 7th semester. GPA 3.71 of 4.0
 
 Responsibilities:
 - 1) Plan and execute cloud cost saving activity
@@ -90,23 +84,7 @@ Reach 8500+ Reader (per 2023/01/26) under CodeX publication
 
 ## Training & Certifications
 
-`Jan 2023`
-[Associate Cloud Engineer](https://www.credential.net/3e62c331-8419-43d6-9d48-849d04182582), *from GCP*
-
-`Sep 2022`
-[Google Cloud Fundamentals: Core Infrastructure](https://www.coursera.org/account/accomplishments/verify/B2V6L4ZSGNUH), *from Coursera*
-
-`Mar 2021`
-[DevOps Engineering on AWS](https://1drv.ms/b/s!AgiuQdtA6DaqkRFlSnO8rKrDO8iQ?e=htxgE9), *from AWS*
-
-
-
-## Education
-
-`2016 - 2020`
-__Bina Nusantara University, Jakarta__. Bachelor's degree, Information System
-
-Taking Business Intelligence Specialization. Graduated in 7th semester. GPA 3.8 of 4.0
+## Professional Experience
 
 <!-- ### Footer
 Last updated: Jan 2023 -->
