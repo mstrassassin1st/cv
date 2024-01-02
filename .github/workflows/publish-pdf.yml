@@ -4,9 +4,18 @@ permissions: write-all
 on:
   # Manual Trigger
   workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Release notes for this PDF release'
+        required: true
+        default: 'No description provided on this release'
+      build_private:
+        type: boolean
+        description: 'Build privately & include sensitive data'
+        default: false
   # Run pipeline every first day of the month
-  schedule:
-    - cron: '0 0 1 * *'
+  # schedule:
+  #   - cron: '0 0 1 * *'
   # # Run Pipeline on Manual Push
   # push:
   #   branches:
@@ -18,58 +27,66 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
+    - name: Fill sensitive data to markdown
+      if: ${{ github.event.inputs.build_private == 'true' }}
+      run: sed -i'.bak' 's/<div id="webaddress">/<div id="webaddress">\n<text>${{ secrets.CV_PHONE_NUMBER }}<\/text> | /' index.md
     - name: Build Jekyll pages
       uses: actions/jekyll-build-pages@v1.0.6
       with:
         source: ./
         destination: ./_site
     - name: Publish pages to pipeline artifact
+      if: ${{ github.event.inputs.build_private == 'false' }}
       uses: actions/upload-artifact@v3
       with:
         name: jekyll-published-page
         path: ./_site
+    - name: Publish pages with sensitive data to pipeline artifact
+      if: ${{ github.event.inputs.build_private == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: jekyll-published-page
+        path: ./_site
+        retention-days: 2
 
   publish_pdf:
     runs-on: ubuntu-latest
     needs: [build_jekyll]
     steps:
-    - name: Setup for scheduled pipeline
-      if: ${{ github.event_name == 'schedule' }}
+    - name: Setup Variables
       run: |
-        echo "RELEASE_TYPE=Scheduled" >> $GITHUB_ENV
-        echo "RELEASE_DESC=Monthly release for CV" >> $GITHUB_ENV
-    - name: Setup for manual trigger pipeline
-      if: ${{ github.event_name != 'schedule' }}
-      run: |
-        echo "RELEASE_TYPE=Manual" >> $GITHUB_ENV
-        echo "RELEASE_DESC=on-demand release (generated manually)" >> $GITHUB_ENV
-    - name: Setup for get current date
-      run: |
+        cat <<EOF > release_notes.txt
+        ## :spiral_notepad: Release notes
+           ${{ github.event.inputs.release_notes }}
+        EOF
+        echo "PIPELINE_BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
         echo "PIPELINE_TIMESTAMP=$(date +'%s')" >> $GITHUB_ENV
         echo "PIPELINE_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
-        echo "PIPELINE_YEAR=$(date +'%Y')" >> $GITHUB_ENV
-        echo "PIPELINE_MONTH=$(date +'%B')" >> $GITHUB_ENV
     - name: Pull artifact from previous job
       uses: actions/download-artifact@v3
       with:
         name: jekyll-published-page
         path: ./_site
     - name: Create PDF from artifact
-      uses: fifsky/html-to-pdf-action@v0.1.0
+      uses: markwilson/html2pdf@v1.1
       with:
-        htmlFile: ./_site/index.html
-        outputFile: "./CV-David_Layardi-${{ env.PIPELINE_DATE }}.pdf"
-        pdfOptions: '{"format": "A4", "margin": {"top": "10mm", "left": "10mm", "right": "10mm", "bottom": "10mm"}}'
-    # - name: Publish PDF result to artifact
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: "CV-David_Layardi-${{ env.PIPELINE_DATE }}.pdf"
-    #     path: "./CV-David_Layardi-${{ env.PIPELINE_DATE }}.pdf"
+        htmlPath: "./_site/index.html"
+        pdfName: "CV-${{ env.PIPELINE_DATE }}"
+    - name: Publish PDF result to artifact
+      if: ${{ github.event.inputs.build_private == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: "CV-${{ env.PIPELINE_DATE }}.pdf"
+        path: "${{ github.workspace }}/dist/CV-${{ env.PIPELINE_DATE }}.pdf"
+        retention-days: 2
     - name: Publish PDF to GitHub release
+      if: ${{ github.event.inputs.build_private == 'false' }}
       uses: softprops/action-gh-release@v1
       with:
-        files: "CV-David_Layardi-${{ env.PIPELINE_DATE }}.pdf"
+        files: "${{ github.workspace }}/dist/CV-${{ env.PIPELINE_DATE }}.pdf"
         fail_on_unmatched_files: true
-        name: "🚀 ${{ env.RELEASE_TYPE }} release ${{ env.PIPELINE_MONTH }} ${{ env.PIPELINE_YEAR }}"
-        tag_name: "${{ env.PIPELINE_YEAR }}-${{ env.RELEASE_TYPE }}-${{ env.PIPELINE_TIMESTAMP }}"
-        body: "${{ env.RELEASE_DESC }}"
+        name: "🚀 PDF Publish R.${{ env.PIPELINE_DATE }}"
+        tag_name: "PDF_${{ env.PIPELINE_DATE }}-${{ env.PIPELINE_TIMESTAMP }}"
+        body_path: release_notes.txt
+        body: "No description provided on this release"
+        target_commitish: "${{ env.PIPELINE_BRANCH_NAME }}"
